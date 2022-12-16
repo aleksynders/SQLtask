@@ -49,7 +49,7 @@ public class AdapterDirectory extends BaseAdapter {
         ImageView imageView = view.findViewById(R.id.imageView);
         
         Directory directory = directoryList.get(position);
-        Title.setText(directory.getTitle());
+        Title.setText("ID: " + directory.getID() + " " + directory.getTitle());
         if(directory.getNumber() == null || directory.getNumber().length() < 11){
             Number.setText("Отсутствует");
         }

@@ -2,8 +2,13 @@ package com.example.sqltask;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.ImageButton;
 import android.widget.ListView;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.sqltask.Adapter.AdapterDirectory;
 import com.example.sqltask.Models.Directory;
@@ -23,12 +28,27 @@ public class MainActivity extends AppCompatActivity {
     ListView listView;
     AdapterDirectory pAdapter;
 
+    TextView IDforDo;
+
+    String errorMessage = "";
+
+    ImageButton ImgButton;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
         GetDataFromSql();
+
+        ImgButton = findViewById(R.id.imageButton2);
+        ImgButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(MainActivity.this, AddActivity.class);
+                startActivity(intent);
+            }
+        });
     }
 
     public void GetDataFromSql() {
@@ -62,5 +82,27 @@ public class MainActivity extends AppCompatActivity {
         pAdapter.notifyDataSetInvalidated();
         listView.setAdapter(pAdapter);
 
+    }
+
+    public void deleteSQL(View v) {
+        IDforDo = findViewById(R.id.txtIdForDeleteOrChange);
+            try {
+                ConnectionHelper ch = new ConnectionHelper();
+                connection = ch.connectionClass();
+                if (connection != null) {
+                    String query = "DELETE FROM DirectoryList WHERE ID = " + IDforDo.getText();
+                    Statement statement = connection.createStatement();
+                    statement.executeUpdate(query);
+                    Toast.makeText(this, "Организация удалена!", Toast.LENGTH_LONG).show();
+                    finish();
+                    overridePendingTransition(0, 0);
+                    startActivity(getIntent());
+                    overridePendingTransition(0, 0);
+                } else {
+                    errorMessage = "Попробуйте еще раз...";
+                }
+            } catch (Exception ex) {
+                errorMessage = "Check Connection!";
+            }
     }
 }
