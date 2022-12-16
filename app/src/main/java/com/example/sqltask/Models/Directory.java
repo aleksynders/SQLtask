@@ -2,6 +2,7 @@ package com.example.sqltask.Models;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.widget.ImageView;
 
 public class Directory implements Parcelable {
     int ID;
@@ -45,6 +46,7 @@ public class Directory implements Parcelable {
     public void setMail(String mail) {
         Mail = mail;
     }
+
 
     protected Directory(Parcel in){
 
