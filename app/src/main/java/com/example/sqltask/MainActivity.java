@@ -4,7 +4,10 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -27,6 +30,7 @@ public class MainActivity extends AppCompatActivity {
     List<Directory> data;
     ListView listView;
     AdapterDirectory pAdapter;
+    EditText search;
 
     TextView IDforDo;
 
@@ -47,6 +51,52 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View view) {
                 Intent intent = new Intent(MainActivity.this, AddActivity.class);
                 startActivity(intent);
+            }
+        });
+
+
+        search = findViewById(R.id.txtSearch);
+        search.addTextChangedListener(new TextWatcher(){
+            @Override
+            public void afterTextChanged(Editable s) {
+                data = new ArrayList<Directory>();
+                listView = findViewById(R.id.lvData);
+                pAdapter = new AdapterDirectory(MainActivity.this, data);
+                try {
+                    ConnectionHelper connectionHelper = new ConnectionHelper();
+                    connection = connectionHelper.connectionClass();
+                    if (connection != null) {
+                        String query = "SELECT ID,Title,Number,Mail\n" +
+                                "FROM DirectoryList"
+                                + " WHERE Title LIKE "  + "'%" + search.getText().toString()+ "%'";
+                        Statement statement = connection.createStatement();
+                        ResultSet resultSet = statement.executeQuery(query);
+
+                        while (resultSet.next()) {
+                            Directory tempDirectory = new Directory
+                                    (   resultSet.getInt("ID"),
+                                            resultSet.getString("Title"),
+                                            resultSet.getString("Number"),
+                                            resultSet.getString("Mail")
+                                    );
+                            data.add(tempDirectory);
+                        }
+                        connection.close();
+                    } else {
+                    }
+                } catch (SQLException throwables) {
+                    throwables.printStackTrace();
+                }
+                pAdapter.notifyDataSetInvalidated();
+                listView.setAdapter(pAdapter);
+            }
+
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
             }
         });
     }
@@ -81,6 +131,8 @@ public class MainActivity extends AppCompatActivity {
         }
         pAdapter.notifyDataSetInvalidated();
         listView.setAdapter(pAdapter);
+
+
 
     }
 
