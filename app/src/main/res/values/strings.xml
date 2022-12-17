@@ -1,3 +1,10 @@
 <resources>
     <string name="app_name">SQLtask</string>
+
+    <string-array name="spinner">
+        <item>По умолчанию</item>
+        <item>От А до Я</item>
+        <item>От Я до А</item>
+    </string-array>
+
 </resources>

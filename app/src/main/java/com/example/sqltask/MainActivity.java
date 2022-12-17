@@ -7,9 +7,11 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ListView;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -31,6 +33,8 @@ public class MainActivity extends AppCompatActivity {
     ListView listView;
     AdapterDirectory pAdapter;
     EditText search;
+    Spinner spinner;
+
 
     TextView IDforDo;
 
@@ -56,39 +60,214 @@ public class MainActivity extends AppCompatActivity {
 
 
         search = findViewById(R.id.txtSearch);
+        spinner = findViewById(R.id.spinner);
+        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                if(spinner.getSelectedItemId() == 0){
+                    data = new ArrayList<Directory>();
+                    listView = findViewById(R.id.lvData);
+                    pAdapter = new AdapterDirectory(MainActivity.this, data);
+                    try {
+                        ConnectionHelper connectionHelper = new ConnectionHelper();
+                        connection = connectionHelper.connectionClass();
+                        if (connection != null) {
+                            String query = "SELECT ID,Title,Number,Mail\n" +
+                                    "FROM DirectoryList"
+                                    + " WHERE Title LIKE "  + "'%" + search.getText().toString()+ "%'";
+                            Statement statement = connection.createStatement();
+                            ResultSet resultSet = statement.executeQuery(query);
+
+                            while (resultSet.next()) {
+                                Directory tempDirectory = new Directory
+                                        (   resultSet.getInt("ID"),
+                                                resultSet.getString("Title"),
+                                                resultSet.getString("Number"),
+                                                resultSet.getString("Mail")
+                                        );
+                                data.add(tempDirectory);
+                            }
+                            connection.close();
+                        } else {
+                        }
+                    } catch (SQLException throwables) {
+                        throwables.printStackTrace();
+                    }
+                    pAdapter.notifyDataSetInvalidated();
+                    listView.setAdapter(pAdapter);
+                }
+                else if (spinner.getSelectedItemId() == 1){
+                    data = new ArrayList<Directory>();
+                    listView = findViewById(R.id.lvData);
+                    pAdapter = new AdapterDirectory(MainActivity.this, data);
+                    try {
+                        ConnectionHelper connectionHelper = new ConnectionHelper();
+                        connection = connectionHelper.connectionClass();
+                        if (connection != null) {
+                            String query = "SELECT ID,Title,Number,Mail\n" +
+                                    "FROM DirectoryList"
+                                    + " WHERE Title LIKE "  + "'%" + search.getText().toString()+ "%'" + "\nORDER BY Title";
+                            Statement statement = connection.createStatement();
+                            ResultSet resultSet = statement.executeQuery(query);
+
+                            while (resultSet.next()) {
+                                Directory tempDirectory = new Directory
+                                        (   resultSet.getInt("ID"),
+                                                resultSet.getString("Title"),
+                                                resultSet.getString("Number"),
+                                                resultSet.getString("Mail")
+                                        );
+                                data.add(tempDirectory);
+                            }
+                            connection.close();
+                        } else {
+                        }
+                    } catch (SQLException throwables) {
+                        throwables.printStackTrace();
+                    }
+                    pAdapter.notifyDataSetInvalidated();
+                    listView.setAdapter(pAdapter);
+                }
+                else if (spinner.getSelectedItemId() == 2){
+                    data = new ArrayList<Directory>();
+                    listView = findViewById(R.id.lvData);
+                    pAdapter = new AdapterDirectory(MainActivity.this, data);
+                    try {
+                        ConnectionHelper connectionHelper = new ConnectionHelper();
+                        connection = connectionHelper.connectionClass();
+                        if (connection != null) {
+                            String query = "SELECT ID,Title,Number,Mail\n" +
+                                    "FROM DirectoryList"
+                                    + " WHERE Title LIKE "  + "'%" + search.getText().toString()+ "%'" + "\nORDER BY Title DESC";
+                            Statement statement = connection.createStatement();
+                            ResultSet resultSet = statement.executeQuery(query);
+
+                            while (resultSet.next()) {
+                                Directory tempDirectory = new Directory
+                                        (   resultSet.getInt("ID"),
+                                                resultSet.getString("Title"),
+                                                resultSet.getString("Number"),
+                                                resultSet.getString("Mail")
+                                        );
+                                data.add(tempDirectory);
+                            }
+                            connection.close();
+                        } else {
+                        }
+                    } catch (SQLException throwables) {
+                        throwables.printStackTrace();
+                    }
+                    pAdapter.notifyDataSetInvalidated();
+                    listView.setAdapter(pAdapter);
+                }
+            }
+
+            @Override public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
+        SeachAndSort();
+    }
+
+    public void SeachAndSort(){
         search.addTextChangedListener(new TextWatcher(){
             @Override
             public void afterTextChanged(Editable s) {
-                data = new ArrayList<Directory>();
-                listView = findViewById(R.id.lvData);
-                pAdapter = new AdapterDirectory(MainActivity.this, data);
-                try {
-                    ConnectionHelper connectionHelper = new ConnectionHelper();
-                    connection = connectionHelper.connectionClass();
-                    if (connection != null) {
-                        String query = "SELECT ID,Title,Number,Mail\n" +
-                                "FROM DirectoryList"
-                                + " WHERE Title LIKE "  + "'%" + search.getText().toString()+ "%'";
-                        Statement statement = connection.createStatement();
-                        ResultSet resultSet = statement.executeQuery(query);
+                if(spinner.getSelectedItemId() == 0){
+                    data = new ArrayList<Directory>();
+                    listView = findViewById(R.id.lvData);
+                    pAdapter = new AdapterDirectory(MainActivity.this, data);
+                    try {
+                        ConnectionHelper connectionHelper = new ConnectionHelper();
+                        connection = connectionHelper.connectionClass();
+                        if (connection != null) {
+                            String query = "SELECT ID,Title,Number,Mail\n" +
+                                    "FROM DirectoryList"
+                                    + " WHERE Title LIKE "  + "'%" + search.getText().toString()+ "%'";
+                            Statement statement = connection.createStatement();
+                            ResultSet resultSet = statement.executeQuery(query);
 
-                        while (resultSet.next()) {
-                            Directory tempDirectory = new Directory
-                                    (   resultSet.getInt("ID"),
-                                            resultSet.getString("Title"),
-                                            resultSet.getString("Number"),
-                                            resultSet.getString("Mail")
-                                    );
-                            data.add(tempDirectory);
+                            while (resultSet.next()) {
+                                Directory tempDirectory = new Directory
+                                        (   resultSet.getInt("ID"),
+                                                resultSet.getString("Title"),
+                                                resultSet.getString("Number"),
+                                                resultSet.getString("Mail")
+                                        );
+                                data.add(tempDirectory);
+                            }
+                            connection.close();
+                        } else {
                         }
-                        connection.close();
-                    } else {
+                    } catch (SQLException throwables) {
+                        throwables.printStackTrace();
                     }
-                } catch (SQLException throwables) {
-                    throwables.printStackTrace();
+                    pAdapter.notifyDataSetInvalidated();
+                    listView.setAdapter(pAdapter);
                 }
-                pAdapter.notifyDataSetInvalidated();
-                listView.setAdapter(pAdapter);
+                else if (spinner.getSelectedItemId() == 1){
+                    data = new ArrayList<Directory>();
+                    listView = findViewById(R.id.lvData);
+                    pAdapter = new AdapterDirectory(MainActivity.this, data);
+                    try {
+                        ConnectionHelper connectionHelper = new ConnectionHelper();
+                        connection = connectionHelper.connectionClass();
+                        if (connection != null) {
+                            String query = "SELECT ID,Title,Number,Mail\n" +
+                                    "FROM DirectoryList"
+                                    + " WHERE Title LIKE "  + "'%" + search.getText().toString()+ "%'" + "\nORDER BY Title";
+                            Statement statement = connection.createStatement();
+                            ResultSet resultSet = statement.executeQuery(query);
+
+                            while (resultSet.next()) {
+                                Directory tempDirectory = new Directory
+                                        (   resultSet.getInt("ID"),
+                                                resultSet.getString("Title"),
+                                                resultSet.getString("Number"),
+                                                resultSet.getString("Mail")
+                                        );
+                                data.add(tempDirectory);
+                            }
+                            connection.close();
+                        } else {
+                        }
+                    } catch (SQLException throwables) {
+                        throwables.printStackTrace();
+                    }
+                    pAdapter.notifyDataSetInvalidated();
+                    listView.setAdapter(pAdapter);
+                }
+                else if (spinner.getSelectedItemId() == 2){
+                    data = new ArrayList<Directory>();
+                    listView = findViewById(R.id.lvData);
+                    pAdapter = new AdapterDirectory(MainActivity.this, data);
+                    try {
+                        ConnectionHelper connectionHelper = new ConnectionHelper();
+                        connection = connectionHelper.connectionClass();
+                        if (connection != null) {
+                            String query = "SELECT ID,Title,Number,Mail\n" +
+                                    "FROM DirectoryList"
+                                    + " WHERE Title LIKE "  + "'%" + search.getText().toString()+ "%'" + "\nORDER BY Title DESC";
+                            Statement statement = connection.createStatement();
+                            ResultSet resultSet = statement.executeQuery(query);
+
+                            while (resultSet.next()) {
+                                Directory tempDirectory = new Directory
+                                        (   resultSet.getInt("ID"),
+                                                resultSet.getString("Title"),
+                                                resultSet.getString("Number"),
+                                                resultSet.getString("Mail")
+                                        );
+                                data.add(tempDirectory);
+                            }
+                            connection.close();
+                        } else {
+                        }
+                    } catch (SQLException throwables) {
+                        throwables.printStackTrace();
+                    }
+                    pAdapter.notifyDataSetInvalidated();
+                    listView.setAdapter(pAdapter);
+                }
             }
 
             @Override
@@ -131,9 +310,6 @@ public class MainActivity extends AppCompatActivity {
         }
         pAdapter.notifyDataSetInvalidated();
         listView.setAdapter(pAdapter);
-
-
-
     }
 
     public void deleteSQL(View v) {
